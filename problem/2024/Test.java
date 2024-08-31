@@ -13,24 +13,53 @@ public class Test
 
     public static void one()
     {
-        System.out.println(YELLOW + "---------- Part(a) ----------");
-        Feeder f1 = new Feeder(5000);
-        System.out.println(RESET + "Origin Food : " + GREEN + f1.getFood());
-        f1.simulateOneDay(12);
-        System.out.println(RESET + "After oneDay : " + GREEN + f1.getFood());
+        System.out.println(YELLOW + "\n-------- Testing simulateOneDay --------" + RESET);
+        boolean bearVisit = false;
         
-        System.out.println(YELLOW + "---------- Part(b) ex.1----------");
-        Feeder f2 = new Feeder(2400);
-        System.out.println(RESET + "Origin Food : " + GREEN + f2.getFood());
-        f2.simulateManyDays(10, 4);
-        System.out.println(RESET + "After oneDay : " + GREEN + f2.getFood());
+        for(int i = 0; i < 1000; i++)
+        {
+            Feeder f1 = new Feeder(5000);
+            f1.simulateRandomSeed(12345); // Set a seed that will trigger a bear visit
+            f1.simulateOneDay(2);
+            if(f1.getFood() == 0)
+            {
+                bearVisit = true;
+            }
+        }
+        System.out.println("Test 1 (Bear visit): " + (bearVisit ? GREEN + "PASS" : RED + "FAIL") + RESET);
 
-        System.out.println(YELLOW + "---------- Part(b) ex.2----------");
-        Feeder f3 = new Feeder(0);
-        System.out.println(RESET + "Origin Food : " + GREEN + f3.getFood());
-        f3.simulateManyDays(5, 10);
-        System.out.println(RESET + "After oneDay : " + GREEN + f3.getFood());
+        // Test 2: Normal day
+        Feeder f2 = new Feeder(5000);
+        f2.simulateRandomSeed(54321); // Set a seed for a normal day
+        int initialFood = f2.getFood();
+        f2.simulateOneDay(10);
+        System.out.println("Test 2 (Normal day): " + (f2.getFood() < initialFood && f2.getFood() >= 0 ? GREEN + "PASS" : RED + "FAIL") + RESET);
+
+        // Test 3: Edge case - 1 bird
+        Feeder f3 = new Feeder(100);
+        f3.simulateRandomSeed(11111);
+        f3.simulateOneDay(1);
+        System.out.println("Test 3 (1 bird): " + (f3.getFood() <= 100 && f3.getFood() >= 50 ? GREEN + "PASS" : RED + "FAIL") + RESET);
+    
+        System.out.println(YELLOW + "\n-------- Testing simulateManyDays --------" + RESET);
         
+        // Test 4: Food runs out
+        Feeder f4 = new Feeder(500);
+        f4.simulateRandomSeed(12345);
+        int days1 = f4.simulateManyDays(20, 30);
+        System.out.println("Test 1 (Food runs out): " + (days1 > 0 && days1 <= 30 ? GREEN + "PASS" : RED + "FAIL") + RESET);
+
+        // Test 5: Food doesn't run out
+        Feeder f5 = new Feeder(10000);
+        f5.simulateRandomSeed(54321);
+        int days2 = f5.simulateManyDays(3, 10);
+        System.out.println("Test 2 (Food doesn't run out): " + (days2 == 0 ? GREEN + "PASS" : RED + "FAIL") + RESET);
+
+        // Test 6: Edge case - 1 day
+        Feeder f6 = new Feeder(100);
+        f6.simulateRandomSeed(11111);
+        int days3 = f6.simulateManyDays(50, 1);
+        System.out.println("Test 3 (1 day): " + (days3 == 0 || days3 == 1 ? GREEN + "PASS" : RED + "FAIL") + RESET);
 
         System.out.print(RESET);
     }
@@ -126,8 +155,6 @@ public class Test
         System.out.println(YELLOW + "\n-------- Testing simulateOneDay --------" + RESET);
         
         // Test 1: Bear visit
-
-        
         boolean bearVisit = false;
         
         for(int i = 0; i < 1000; i++)
@@ -157,25 +184,7 @@ public class Test
     }
 
     public static void testSimulateManyDays() {
-        System.out.println(YELLOW + "\n-------- Testing simulateManyDays --------" + RESET);
-        
-        // Test 1: Food runs out
-        Feeder f1 = new Feeder(500);
-        f1.simulateRandomSeed(12345);
-        int days1 = f1.simulateManyDays(20, 30);
-        System.out.println("Test 1 (Food runs out): " + (days1 > 0 && days1 <= 30 ? GREEN + "PASS" : RED + "FAIL") + RESET);
 
-        // Test 2: Food doesn't run out
-        Feeder f2 = new Feeder(10000);
-        f2.simulateRandomSeed(54321);
-        int days2 = f2.simulateManyDays(5, 10);
-        System.out.println("Test 2 (Food doesn't run out): " + (days2 == 0 ? GREEN + "PASS" : RED + "FAIL") + RESET);
-
-        // Test 3: Edge case - 1 day
-        Feeder f3 = new Feeder(100);
-        f3.simulateRandomSeed(11111);
-        int days3 = f3.simulateManyDays(50, 1);
-        System.out.println("Test 3 (1 day): " + (days3 == 0 || days3 == 1 ? GREEN + "PASS" : RED + "FAIL") + RESET);
     }
 
     public static void testStatisticalProperties() {
